@@ -1,0 +1,30 @@
+server:
+  service:
+    type: ClusterIP   # Internal service, exposed via ALB ingress
+  ingress:
+    enabled: true
+    ingressClassName: alb
+    annotations:
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    hosts:
+      - argocd.dev.example.com   # Replace with ALB DNS name if no domain
+    paths:
+      - /
+
+configs:
+  cm:
+    url: http://argocd.dev.example.com   # HTTP only
+    accounts.github-actions: login,apiKey
+    accounts.github-actions.enabled: "true"
+    accounts.admin: login,apiKey         #  allow admin to generate API keys
+
+  rbac:
+    policy.csv: |
+      p, proj:default, applications, sync, *, allow
+      p, proj:default, applications, get, *, allow
+      g, github-actions, role:admin
+      g, admin, role:admin               
+    scopes: "[groups,accounts]"
