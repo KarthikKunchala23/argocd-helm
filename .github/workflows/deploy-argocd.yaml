@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "values.yaml"
+      - "charts/argocd/values.yaml"
       - ".github/workflows/deploy-argocd.yaml"
   workflow_dispatch:
     inputs:
@@ -64,7 +64,7 @@ jobs:
           helm upgrade --install argocd argo/argo-cd \
             --namespace argocd \
             --version 5.51.6 \
-            --values ./values.yaml
+            --values ./charts/argocd/values.yaml
 
       - name: Wait for ArgoCD to become ready
         run: |
